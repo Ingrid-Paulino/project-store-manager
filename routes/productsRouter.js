@@ -7,4 +7,8 @@ const productRoute = express.Router({ mergeParams: true });
 
 productRoute.post('/', productValidName, productValidQuantity, productCreateController.create);
 
+productRoute.get('/:id', productCreateController.getId);
+
+productRoute.get('/', productCreateController.getAll);
+
 module.exports = productRoute;
