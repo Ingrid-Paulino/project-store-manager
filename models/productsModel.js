@@ -10,14 +10,14 @@ const create = async (name, quantity) => {
     // console.log('result', row);
     return { id: row.insertId, name, quantity };
   } catch (err) {
-    return err;
+    return err.message;
   }
 };
 
 const getByName = async (name) => {
   const query = 'SELECT * FROM products WHERE name = ?';
   const [[rows]] = await conn.execute(query, [name]);
-  console.log(rows);
+  // console.log(rows);
   return rows;
 };
 
