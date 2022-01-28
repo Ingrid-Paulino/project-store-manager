@@ -20,7 +20,7 @@ const getByName = async (name) => {
   // console.log(rows);
   return rows;
 };
-
+//
 const getAll = async () => {
   const query = 'SELECT * FROM products';
   const [rows] = await conn.execute(query);
