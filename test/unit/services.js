@@ -1,8 +1,9 @@
 const sinon = require('sinon');
 const { expect } = require('chai');
 const productModel = require('../../models/productsModel')
-const productService = require('../../services/movieService');
+const productService = require('../../services/productervice');
 
+//testes create
 describe('Insere um novo produto no BD', () => {
   describe('quando o payload informado não é válido', () => {
     const payloadProduct = {};
@@ -51,5 +52,69 @@ describe('Insere um novo produto no BD', () => {
       expect(response).to.have.a.property('id');
     });
 
+  });
+});
+
+
+//testes obter todos
+describe("consulta de todos os produtos do BD", () => {
+  describe("quando não existe produto criado", () => {
+    before(() => {
+      sinon.stub(productModel, "getAll").resolves([]);
+    });
+
+    after(() => {
+      productModel.getAll.restore();
+    });
+
+    it("retorna um array", async () => {
+      const response = await productervice.getAll();
+
+      expect(response).to.be.an("array");
+    });
+
+    it("retorna um array vazio", async () => {
+      const response = await productervice.getAll();
+
+      expect(response).to.be.empty;
+    });
+  });
+
+  describe("quando existe produtos criados", () => {
+    before(() => {
+      sinon.stub(productModel, "getAll").resolves([
+        {
+          id: 1,
+          name: 'Blusa',
+          quantity: 10,
+  },
+      ]);
+    });
+
+    after(() => {
+      productModel.getAll.restore();
+    });
+
+    it("retorna um array", async () => {
+      const response = await productervice.getAll();
+
+      expect(response).to.be.an("array");
+    });
+
+    it("o array não está vazio", async () => {
+      const response = await productervice.getAll();
+
+      expect(response).to.be.not.empty; // empty === vazio
+    });
+
+    it('tais itens possui as propriedades: "id", "name", e "quantity"', async () => {
+      const [item] = await productervice.getAll();
+
+      expect(item).to.include.all.keys(
+        "id",
+        "name",
+        "quantity",
+      );
+    });
   });
 });

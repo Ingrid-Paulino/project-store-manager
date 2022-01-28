@@ -1,8 +1,9 @@
 const sinon = require('sinon');
 const { expect } = require('chai');
-const conn = require('../../models/connection')
+const conn = require('../../models/conn')
 const productModel = require('../../models/productsModel')
 
+//testes create
 describe('Insere um novo produto no BD', () => {
 
   //chaves que tera no obj criado
@@ -38,5 +39,70 @@ describe('Insere um novo produto no BD', () => {
       expect(response).to.have.a.property('id')
     });
 
+  });
+});
+
+// testes obiter todos
+describe("consulta de todos os produtos do BD", () => {
+  describe("quando não existe produto criado", () => {
+    before(() => {
+      sinon.stub(conn, "execute").resolves([[]]);
+    });
+
+    after(() => {
+      conn.execute.restore();
+    });
+
+    it("retorna um array", async () => {
+      const response = await productModel.getAll();
+
+      expect(response).to.be.an("array");
+    });
+
+    it("retorna um array vazio", async () => {
+      const response = await productModel.getAll();
+
+      expect(response).to.be.empty;
+    });
+  });
+
+  describe("quando existe produtos criados", () => {
+    before(() => {
+      sinon.stub(conn, "execute").resolves([
+        [
+          { 
+            id: 1,
+            name: 'Blusa',
+            quantity: 10
+          },
+        ],
+      ]);
+    });
+
+    after(() => {
+      conn.execute.restore();
+    });
+
+    it("retorna um array", async () => {
+      const response = await productModel.getAll();
+
+      expect(response).to.be.an("array");
+    });
+
+    it("o array não está vazio", async () => {
+      const response = await productModel.getAll();
+
+      expect(response).to.be.not.empty;
+    });
+
+    it('tais itens possui as propriedades: "id", "name", e "quantity"', async () => {
+      const [item] = await productModel.getAll();
+
+      expect(item).to.include.all.keys(
+        "id",
+        "name",
+        "quantity",
+      );
+    });
   });
 });
