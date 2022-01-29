@@ -37,11 +37,17 @@ const getById = async (id) => {
 };
 
 const update = async (id, name, quantity) => {
-  const query = 'UPDATE artists SET name = ?, quantity = ? WHERE id = ?';
+  const query = 'UPDATE products SET name = ?, quantity = ? WHERE id = ?';
 
   const [row] = await conn.execute(query, [name, quantity, id]);
 
   return row;
+};
+
+const remove = async (id) => {
+  const query = 'DELETE FROM products WHERE id = ?';
+
+  await conn.execute(query, [id]);
 };
 
 module.exports = {
@@ -50,4 +56,5 @@ module.exports = {
   getAll,
   getById,
   update,
+  remove,
 };

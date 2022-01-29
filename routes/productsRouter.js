@@ -13,4 +13,6 @@ productRoute.get('/', productCreateController.getAll);
 
 productRoute.put('/', productCreateController.updateProduct);
 
+productRoute.delete('/:id', productCreateController.remove);
+
 module.exports = productRoute;
