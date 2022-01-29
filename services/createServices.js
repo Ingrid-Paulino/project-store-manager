@@ -16,8 +16,17 @@ const getIdProduct = async (id) => {
   return productId;
 };
 
+const updateProduct = async (id, name, quantity) => {
+  const productId = await productModel.getById(id);
+
+  if (!productId) return { status: 409, message: 'Product already exists' };
+
+  return productModel.update(id, name, quantity);
+};
+
 module.exports = {
   createProductValid,
   getAllProducts,
   getIdProduct,
+  updateProduct,
 };

@@ -1,7 +1,7 @@
 const sinon = require('sinon');
 const { expect } = require('chai');
 const productModel = require('../../models/productsModel')
-const productService = require('../../services/productervice');
+const productService = require('../../services/createServices');
 
 //testes create
 describe('Insere um novo produto no BD', () => {
@@ -11,7 +11,9 @@ describe('Insere um novo produto no BD', () => {
     it('retorna um boolean', async () => {
       const response = await productService.create(payloadProduct);
 
-      expect(response).to.be.a('boolean');
+      // expect(response).to.be.a('boolean');
+
+      expect(response).to.be.empty;
     });
 
     it('o boolean contém "false"', async () => {
@@ -24,15 +26,15 @@ describe('Insere um novo produto no BD', () => {
 
   describe('quando é inserido com sucesso', () => {
     const payloadProduct = {
+      id: 1,
       name: 'Blusa',
       quantity: 10,
     }
 
     //mocando
     before(async () => {
-      const ID_EXAMPLE = 1;
 
-      sinon.stub(productModel, 'create').resolves({ id: ID_EXAMPLE });
+      sinon.stub(productModel, 'create').resolves(payloadProduct);
     })
 
     // Restauraremos a função `execute` original após os testes.
@@ -43,7 +45,7 @@ describe('Insere um novo produto no BD', () => {
     it('retorna um objeto', async () => {
       const response = await productService.create(payloadProduct);
 
-      expect(response).to.be.a('object');
+      expect(response).to.be.an('object');
     });
 
     it('tal objeto possui o "id" do novo filme inserido', async () => {

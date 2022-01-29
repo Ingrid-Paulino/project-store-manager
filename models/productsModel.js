@@ -36,9 +36,18 @@ const getById = async (id) => {
   return row;
 };
 
+const update = async (id, name, quantity) => {
+  const query = 'UPDATE artists SET name = ?, quantity = ? WHERE id = ?';
+
+  const [row] = await conn.execute(query, [name, quantity, id]);
+
+  return row;
+};
+
 module.exports = {
   create,
   getByName,
   getAll,
   getById,
+  update,
 };
