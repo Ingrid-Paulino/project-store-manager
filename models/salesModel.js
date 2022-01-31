@@ -1,6 +1,6 @@
 // const conn = require('./connection');
 
-// const create = async (`product_id`, quantity) => {
+// const create = async (productId, quantity) => {
 //   try {
 //     const query = 'INSERT INTO products (name, quantity) VALUES (?, ?)';
 
