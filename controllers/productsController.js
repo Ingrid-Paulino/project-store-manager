@@ -1,4 +1,4 @@
-const productService = require('../services/createServices');
+const productService = require('../services/productsServices');
 
 const create = async (req, res, next) => {
   const { name, quantity } = req.body;
@@ -29,26 +29,23 @@ const getId = async (req, res, next) => {
 const updateProduct = async (req, res, next) => {
   const { id } = req.params;
   // const { name, quantity } = req.body;
+  const uupdateProduct = { id, ...req.body };
+  
+  const product = await productService.updateProduct(uupdateProduct);
 
-  const productId = await productService.getById(id);
+  if ('status' in product) return next(product);
 
-  if ('status' in productId) return next(productId);
-      
-  const newProduct = { ...productId, ...req.body };
-
-  await productService.updateProduct(newProduct);
-
-  return res.status(204).end();
+  return res.status(200).json(product);
 };
 
 const remove = async (req, res, next) => {
   const { id } = req.params;
-  const { name, quantity } = req.body;
+  // const { name, quantity } = req.body;
   const exitProduct = await productService.removeProduct(id);
 
   if ('status' in exitProduct) return next(exitProduct);
 
-  res.status(200).json({ message: `id: ${id}, name: ${name}, quantity: ${quantity}` });
+  res.status(200).json(exitProduct);
 };
 
 module.exports = {

@@ -16,17 +16,23 @@ const getIdProduct = async (id) => {
   return productId;
 };
 
-const updateProduct = async (id, name, quantity) => {
+const updateProduct = async ({ id, name, quantity }) => {
   const productId = await productModel.getById(id);
 
-  if (!productId) return { status: 409, message: 'Product already exists' };
-
-  return productModel.update(id, name, quantity);
+  if (!productId) return { status: 404, message: 'Product not found' };
+  const update = await productModel.update(id, name, quantity);
+  return update;
 };
 
 const removeProduct = async (id) => {
+  const productId = await productModel.getById(id);
+
+  if (!productId) return { status: 404, message: 'Product not found' };
+
   const exitProduct = await productModel.remove(id);
-  if (!exitProduct) return { status: 404, message: 'Product not found' };
+  console.log('ex', exitProduct);
+
+  return productId;
 };
 
 module.exports = {

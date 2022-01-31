@@ -1,18 +1,18 @@
 const express = require('express'); 
 const productValidName = require('../middlewares/validName');
 const productValidQuantity = require('../middlewares/validQuatity');
-const productCreateController = require('../controllers/createController');
+const productController = require('../controllers/productsController');
 
 const productRoute = express.Router({ mergeParams: true });
 
-productRoute.post('/', productValidName, productValidQuantity, productCreateController.create);
+productRoute.post('/', productValidName, productValidQuantity, productController.create);
 
-productRoute.get('/:id', productCreateController.getId);
+productRoute.get('/:id', productController.getId);
 
-productRoute.get('/', productCreateController.getAll);
+productRoute.get('/', productController.getAll);
 
-productRoute.put('/', productCreateController.updateProduct);
+productRoute.put('/:id', productValidName, productValidQuantity, productController.updateProduct);
 
-productRoute.delete('/:id', productCreateController.remove);
+productRoute.delete('/:id', productController.remove);
 
 module.exports = productRoute;
