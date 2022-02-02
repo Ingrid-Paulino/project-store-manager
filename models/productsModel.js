@@ -30,10 +30,8 @@ const getAll = async () => {
 
 const getById = async (id) => {
   const query = 'SELECT * FROM products WHERE id = ?';
-
-  const [[row]] = await conn.execute(query, [id]);
-
-  return row;
+  const [[rows]] = await conn.execute(query, [id]);
+  return rows;
 };
 
 const update = async (id, name, quantity) => {

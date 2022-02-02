@@ -1,17 +1,21 @@
-// const conn = require('./connection');
+const conn = require('./connection');
 
-// const create = async (productId, quantity) => {
-//   try {
-//     const query = 'INSERT INTO products (name, quantity) VALUES (?, ?)';
+const createSale = async () => {
+  const query = 'INSERT INTO sales (date) VALUES (?)';
+  const [row] = await conn.execute(query, [new Date()]);
+  return row.insertId;
+};
 
-//     // row or result
-//     const [row] = await conn.execute(query, [`product_id`, quantity]);
+const create = async (itemsSold) => {
+  const saleId = await createSale();
+  const createQuery = itemsSold.map(async (item) => {
+    const query = 'INSERT INTO sales_products (sale_id, product_id, quantity) VALUES (?, ?, ?)';
+    await conn.execute(query, [saleId, item.product_id, item.quantity]);
+  });
 
-//     // console.log('result', row);
-//     return { product_id: row.insertId, quantity };
-//   } catch (err) {
-//     return err.message;
-//   }
-// };
+  await Promise.all(createQuery);
 
-// module.exports = { create };
+  return { id: saleId, itemsSold };
+};
+
+module.exports = { create };

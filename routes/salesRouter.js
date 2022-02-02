@@ -1,9 +1,11 @@
-// const express = require('express'); 
+const express = require('express'); 
 
-// const salesController = require('../controllers/salesControllers');
+const validProductId = require('../middlewares/ValidProductId');
+const validQuantitySales = require('../middlewares/validQuantitySales');
+const salesController = require('../controllers/salesControllers');
 
-// const salesRoute = express.Router({ mergeParams: true });
+const salesRoute = express.Router({ mergeParams: true });
 
-// salesRoute.post('/', salesController.create);
+salesRoute.post('/', validProductId, validQuantitySales, salesController.create);
 
-// module.exports = salestRoute;
+module.exports = salesRoute;
