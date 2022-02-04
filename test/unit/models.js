@@ -36,7 +36,7 @@ describe("Tests products", () => {
   });
 
   // testes obiter todos
-  describe("consulta de todos os produtos do BD", () => {
+  describe.only("consulta de todos os produtos do BD", () => {
     describe("quando não existe produto criado", () => {
       before(async () => {
         const mock = [[]];

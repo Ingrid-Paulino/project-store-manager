@@ -18,13 +18,6 @@ const create = async (itemsSold) => {
   return { id: saleId, itemsSold };
 };
 
-// const getAll = async () => {
-//   const query = 'SELECT * FROM sales_products';
-//   const [rows] = await conn.execute(query);
-
-//   return rows;
-// };
-
 const getAll = async () => {
   const query = `SELECT
     SP.sale_id AS saleId,
@@ -36,7 +29,6 @@ const getAll = async () => {
     ON SP.sale_id = S.id `;
 
   const [rows] = await conn.execute(query);
-
   return rows;
 };
 
@@ -54,4 +46,20 @@ WHERE S.id = ?`;
   return rows;
 };
 
-module.exports = { create, getAll, getById };
+const getById2 = async (id) => {
+  const query = 'SELECT * FROM sales WHERE id = ?';
+  const [[rows]] = await conn.execute(query, [id]);
+  return rows;
+};
+
+const update = async (id, uupdateSales) => {
+    await Promise.all(uupdateSales.map(async (item) => {
+      console.log('item', item.quantity, id);
+    const query = 'UPDATE sales_products SET quantity = ? WHERE sale_id = ?';
+    await conn.execute(query, [item.quantity, id]);
+  }));
+
+  return { saleId: id, itemUpdated: uupdateSales };
+};
+
+module.exports = { create, getAll, getById, getById2, update };

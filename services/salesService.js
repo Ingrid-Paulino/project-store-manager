@@ -18,8 +18,21 @@ const getIdSales = async (id) => {
   return productId;
 };
 
+const updateSales = async (id, uupdateSales) => {
+  console.log('fgfg', uupdateSales);
+  const salesId = await salesModel.getById2(id);
+
+  if (!salesId) return { status: 404, message: 'Sales not found' };
+  
+  await Promise.all(uupdateSales);
+  const update = await salesModel.update(id, uupdateSales);
+  
+  return update;
+};
+
 module.exports = {
   create,
   getAllsales,
   getIdSales,
+  updateSales,
 };

@@ -1,11 +1,13 @@
 const salesQuatityValid = async (req, _res, next) => {
   const sales = req.body;
+  console.log('entrou');
 
   const salesMap = sales.map((s) => 'quantity' in s);
 
-  const salesFind = salesMap.find((f) => f === false);
+  const salesFind = salesMap.some((f) => f === false);
+  console.log('find', salesFind);
 
-  if (salesFind === false) {
+  if (salesFind === true) {
     return next({ status: 400, message: '"quantity" is required' });
   }
 

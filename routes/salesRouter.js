@@ -11,4 +11,6 @@ salesRoute.post('/', validProductId, validQuantitySales, salesController.create)
 salesRoute.get('/', salesController.getAll);
 salesRoute.get('/:id', salesController.getId);
 
+salesRoute.put('/:id', validProductId, validQuantitySales, salesController.updateSales);
+
 module.exports = salesRoute;
