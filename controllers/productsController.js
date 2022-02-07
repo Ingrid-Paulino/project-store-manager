@@ -7,6 +7,8 @@ const create = async (req, res, next) => {
 
   if ('status' in newProduct) return next(newProduct);
 
+  console.log(newProduct);
+
   res.status(201).json(newProduct);
 };
 

@@ -3,7 +3,7 @@
 const productNameValid = async (req, _res, next) => {
   const { name } = req.body;
   // const exitProduct = await productModel.create({ name, quantity });
-  console.log(name);
+  // console.log(name);
 
   if (!name) return next({ status: 400, message: '"name" is required' });
   if (name.length <= 4) {

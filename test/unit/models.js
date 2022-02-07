@@ -3,179 +3,125 @@ const { expect } = require("chai");
 const conn = require("../../models/connection");
 const productModel = require("../../models/productsModel");
 
-//testes create
-describe("Tests products", () => {
-  describe("Insere um novo produto no BD", () => {
-    describe("quando é inserido com sucesso", () => {
-      const payloadProduct = {
-        name: "Blusa",
-        quantity: 10,
-      };
+describe("Testes de produtos - model", () => {
+  describe("Testa se é possivel criar um produto", () => {
+    before(() => {
+      sinon.stub(conn, "execute").resolves([{ insertId: 1 }]);
+    });
 
-      //mocando
-      before(async () => {
-        const execute = [{ insertId: 1 }]; // retorno esperado nesse teste
-        sinon.stub(conn, "execute").resolves(execute);
-      });
+    after(() => {
+      conn.execute.restore();
+    });
 
-      // Restauraremos a função `execute` original após os testes.
-      after(async () => {
-        conn.execute.restore();
-      });
-      it("retorna um objeto", async () => {
-        const response = await productModel.create(payloadProduct);
-        expect(response).to.be.a("object");
-      });
+    it('Testa se o produto criado tem a propriedade "id" ', async () => {
+      const response = await productModel.create("sapato", 3);
 
-      it('tal objeto possui o "id" do novo produto inserido', async () => {
-        const response = await productModel.create(payloadProduct);
-
-        expect(response).to.have.a.property("id");
-      });
+      expect(response).to.have.a.property("id");
     });
   });
 
-  // testes obiter todos
-  describe.only("consulta de todos os produtos do BD", () => {
-    describe("quando não existe produto criado", () => {
-      before(async () => {
-        const mock = [[]];
-        sinon.stub(conn, "execute").resolves(mock);
-      });
-
-      after(async () => {
-        conn.execute.restore();
-      });
-
-      it("retorna um array", async () => {
-        // response ou rows
-        const response = await productModel.getAll();
-        expect(response).to.be.an("array");
-      });
-
-      it("retorna um array vazio", async () => {
-        const response = await productModel.getAll();
-        expect(response).to.be.empty;
-      });
+  describe("Testa se é possivel buscar um produto pelo nome ", () => {
+    before(() => {
+      sinon
+        .stub(conn, "execute")
+        .resolves([[{ id: 90, name: "blusa 1", quantity: 2 }]]);
     });
 
-    describe("quando existe produtos criados", () => {
-      const mockedProduct = [
-        [
-          {
-            id: 1,
-            name: "Blusa",
-            quantity: 10,
-          },
-        ],
-      ];
+    after(() => {
+      sinon.restore();
+    });
 
-      before(async () => {
-        const mock = [[mockedProduct]];
-        sinon.stub(conn, "execute").resolves(mock);
-      });
-
-      after(async () => {
-        conn.execute.restore();
-      });
-
-      it("retorna um array", async () => {
-        const response = await productModel.getAll();
-        expect(response).to.be.an("array");
-      });
-
-      it("o array não está vazio", async () => {
-        const response = await productModel.getAll();
-        expect(response).to.be.not.empty;
-      });
-
-      it('tais itens possui as propriedades: "id", "name", e "quantity"', async () => {
-        const [item] = await productModel.getAll();
-        expect(item).to.include.all.keys("id", "name", "quantity");
-
-        // expect(item).to.have.all.keys([
-        //   "id",
-        //   "name",
-        //   "quantity",
-        // ]);
-      });
+    it("Testa se não existe o nome", async () => {
+      const response = await productModel.getByName("blusa 2");
+      // console.log(response);
+      expect(response).to.have.property("name");
     });
   });
 
-  describe("Atualiza produto", () => {
-    describe("quando não existe o produto", () => {
-      before(async () => {
-        const mock = {};
-        sinon.stub(conn, "execute").resolves(mock);
-      });
-
-      after(async () => {
-        conn.execute.restore();
-      });
-
-      it("retorna um objeto", async () => {
-        // response ou rows
-        const response = await productModel.update();
-        expect(response).to.be.an("object");
-      });
-
-      it("retorna um objeto vazio", async () => {
-        const response = await productModel.update();
-        expect(response).to.be.empty;
-      });
+  describe("Testa se todos os produtos são retornados", () => {
+    before(() => {
+      const mock = [[
+        { id: 2, name: "blusa 2", quantity: 10 },
+        { id: 3, name: "blusa", quantity: 3 },
+      ]];
+      sinon.stub(conn, "execute").resolves(mock);
     });
 
-    describe("quando produtos é atualizado", () => {
-      const mockedProduct = {
-        id: 2,
-        name: "Blusa 1",
-        quantity: 15,
-      };
+    after(() => {
+      sinon.restore();
+    });
 
-      before(async () => {
-        const mock = mockedProduct;
-        sinon.stub(conn, "execute").resolves(mock);
-      });
+    it("Testa se retorna um array", async () => {
+      const resolve = await productModel.getAll();
 
-      after(async () => {
-        conn.execute.restore();
-      });
+      expect(resolve).to.be.an("array");
+    });
 
-      it("retorna um objeto", async () => {
-        const response = await productModel.update();
-        expect(response).to.be.an("object");
-      });
+    it("Testa se o array não está vazio", async () => {
+      const response = await productModel.getAll();
+      expect(response).to.be.not.empty;
+    });
 
-      it("o array não está vazio", async () => {
-        const response = await productModel.update();
-        expect(response).to.be.not.empty;
-      });
-
-      it('tais itens possui as propriedades: "id", "name", e "quantity"', async () => {
-        const [item] = await productModel.update();
-        expect(item).to.include.all.keys("id", "name", "quantity");
-
-        // expect(item).to.have.all.keys([
-        //   "id",
-        //   "name",
-        //   "quantity",
-        // ]);
-      });
+    it('Testa se o array possui as propriedades: "id", "name", e "quantity"', async () => {
+      const [response] = await productModel.getAll();
+      // console.log(response);
+      expect(response).to.have.keys("id", "name", "quantity");
     });
   });
 
-  // describe("Deleta produto", () => {
-  //   test("id não exite", () => {
-  //     before(async () => {
-  //       const mock = 1;
-  //       sinon.stub(conn, "execute").resolves(mock);
-  //     });
+  describe("Testa se 'id' do produto existe ", () => {
+    before(() => {
+      sinon
+        .stub(conn, "execute")
+        .resolves([[{ id: 90, name: "blusa 1", quantity: 2 }]]);
+    });
 
-  //     after(async () => {
-  //       conn.execute.restore();
-  //     });
+    after(() => {
+      sinon.restore();
+    });
 
+    it("Testa se existe o id", async () => {
+      const response = await productModel.getById(9);
+      // console.log(response);
+      expect(response).to.have.property("id");
+    });
+  });
 
-  //   });
-  // });
+  describe("Testa se produto foi atualizado", () => {
+    before(() => {
+      const mock = [{ id: 2, name: "blusa 2", quantity: 10 }];
+      sinon.stub(conn, "execute").resolves(mock);
+    });
+
+    after(() => {
+      sinon.restore();
+    });
+
+    it("Testa se produto foi atualizado", async () => {
+      const resolve = await productModel.update(1, 'meia', 9);
+
+      expect(resolve).to.have.property('id');
+    });
+
+    it("Testa se retorna um object", async () => {
+      const response = await productModel.update(7, 'luva', 4);
+      expect(response).to.be.an('object');
+    });
+  });
+
+  describe("Testa se 'id' do produto foi removido", () => {
+    before(() => {
+      sinon.stub(conn, "execute").resolves();
+    });
+
+    after(() => {
+      sinon.restore();
+    });
+
+    it("Testa se foi deletado o produto do id", async () => {
+      const response = await productModel.remove(3);
+      // console.log(response);
+      expect(response).to.be.true;
+    });
+  });
 });

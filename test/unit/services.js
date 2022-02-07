@@ -3,9 +3,9 @@ const { expect } = require("chai");
 const productModel = require("../../models/productsModel");
 const productService = require("../../services/productsServices");
 
-//testes create
-describe("first", () => {
-  describe("Inserindo um novo produto no BD vias services", () => {
+describe("Testes de produtos - service", () => {
+
+  describe("Testa se é possivel criar um produto", () => {
     before(() => {
       sinon.stub(productModel, "getByName").resolves(false);
 
@@ -19,97 +19,101 @@ describe("first", () => {
       productModel.create.restore();
     });
 
+    it('Testa se o produto criado tem a propriedade "id" ', async () => {
+        const response = await productService.createProductValid("sapato", 3);
+  
+        expect(response).to.have.a.property("id");
+      });
+
     it("Quando for sucesso, retorna produto", async () => {
-      const product = await productService.createProductValid("blusa", 10);
+      const response = await productService.createProductValid("blusa", 10);
 
-      expect(product).to.include.all.keys("id", "name", "quantity");
+      expect(response).to.include.all.keys("id", "name", "quantity");
     });
-
-    it('', () => {
-      ;
-    });
-    
   });
 
 
-  //testes obter todos
-  describe("consulta de todos os produtos do BD", () => {
-    describe("quando não existe produto criado", () => {
+  
+
+    describe("Testa que não é possivel criar um produto que ja existe", () => {
       before(() => {
-        sinon.stub(productModel, "getAll").resolves([]);
+        sinon.stub(productModel, "getByName").resolves(true);
       });
-
+  
       after(() => {
-        productModel.getAll.restore();
+        productModel.getByName.restore();
       });
-
-      it("retorna um array", async () => {
-        const response = await productervice.getAll();
-
-        expect(response).to.be.an("array");
+  
+      it('Retorna mensagem e status de erro', async () => {
+          const response = await productService.createProductValid("sapato", 3);
+    
+          expect(response).to.have.all.keys(["status", "message"]);
+        });
       });
+   
 
-      it("retorna um array vazio", async () => {
-        const response = await productervice.getAll();
 
-        expect(response).to.be.empty;
-      });
+
+  describe("Testa se 'id' do produto existe ", () => {
+    before(() => {
+      sinon.stub(productModel, "getById").resolves({ id: 2, name: 'blusa 2', quantity: 10 });
     });
 
-    describe("quando existe produtos criados", () => {
-      before(() => {
-        sinon.stub(productModel, "getAll").resolves([
-          {
-            id: 1,
-            name: "Blusa",
-            quantity: 10,
-          },
-        ]);
-      });
+    after(() => {
+        productModel.getById.restore();
+    });
 
-      after(() => {
-        productModel.getAll.restore();
-      });
+    it("Testa se existe o id", async () => {
+      const response = await productService.getIdProduct(3);
+      // console.log(response);
+      expect(response).to.have.property('id');
+      expect(response).to.be.an('object');
 
-      it("retorna um array", async () => {
-        const response = await productervice.getAll();
+    });
+  });
 
-        expect(response).to.be.an("array");
-      });
 
-      it("o array não está vazio", async () => {
-        const response = await productervice.getAll();
+  describe("Testa se produto foi atualizado", () => {
+    before(() => {
+      sinon.stub(productModel, "getById").resolves({ id: 2, name: 'blusa 2', quantity: 10 });
 
-        expect(response).to.be.not.empty; // empty === vazio
-      });
+      sinon.stub(productModel, "update").resolves({ id: '4', name: 'blusa 55', quantity: 40 });
+    });
 
-      it('tais itens possui as propriedades: "id", "name", e "quantity"', async () => {
-        const [item] = await productervice.getAll();
+    after(() => {
+      sinon.restore();
+    });
 
-        expect(item).to.include.all.keys("id", "name", "quantity");
-      });
+    it("Testa se produto foi atualizado", async () => {
+      const resolve = await productService.updateProduct(1, "meia", 9);
+
+      expect(resolve).to.have.property("id");
+    });
+
+    it("Testa se retorna um object", async () => {
+      const response = await productModel.update(7, "luva", 4);
+      expect(response).to.be.an("object");
+    });
+  });
+
+
+  describe("Testa se 'id' do produto foi removido", () => {
+    before(() => {
+      sinon.stub(productModel, "getById").resolves({ id: 2, name: 'blusa 2', quantity: 10 });
+
+      sinon.stub(productModel, "remove").resolves();
+    });
+
+    after(() => {
+      sinon.restore();
+    });
+
+
+    it("Testa se existe o id", async () => {
+      const response = await productService.removeProduct(3);
+      // console.log(response);
+      expect(response).to.have.property("id");
+      expect(response).to.be.an("object")
     });
   });
 });
-describe('Product Service', () => {
-  describe('Quando não tem produto', () => {
-    before(async () => {
-      const mock = [];
-      sinon.stub(productModel, "getAll").resolves(mock)
-    })
-
-    after(productModel.getAll.restore());
-
-      it('retorna um array', async() => {
-        const products = await productModel.getAll();
-        expect(products).to.be.an('array');
-      });
-
-      it('retorna um array vazio', async() => {
-        const products = await productModel.getAll();
-        expect(products).to.be.empty;
-      });
-
-  })
-
-})

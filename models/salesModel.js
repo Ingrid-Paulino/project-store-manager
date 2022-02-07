@@ -62,4 +62,18 @@ const update = async (id, uupdateSales) => {
   return { saleId: id, itemUpdated: uupdateSales };
 };
 
+// const remove = async (id, uupdateSales) => {
+//   console.log('response 3', uupdateSales);
+
+//   await Promise.all(uupdateSales.map(async (item) => {
+//     console.log('resposta 4', item.quantity, id);
+//     const query = 'DELETE * FROM sales_products WHERE id = ?';
+//     const r = await conn.execute(query, [id]);
+//     console.log('r', r);
+//   }));
+
+//     const query = 'DELETE FROM sales WHERE id = ?';
+//     await conn.execute(query, [id]);
+// };
+
 module.exports = { create, getAll, getById, getById2, update };

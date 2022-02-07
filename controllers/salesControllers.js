@@ -32,9 +32,22 @@ const updateSales = async (req, res, next) => {
   return res.status(200).json(service);
 };
 
+// const remove = async (req, res, next) => {
+//   const { id } = req.params;
+//   // const { name, quantity } = req.body;
+//   const exitsales = await salesService.removeSales(id, req.body);
+
+//   console.log('response1', id, req.body);
+
+//   if ('status' in exitsales) return next(exitsales);
+
+//   res.status(200).json(exitsales);
+// };
+
 module.exports = {
   create,
   getAll,
   getId,
   updateSales,
+  // remove,
 };
