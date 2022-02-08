@@ -6,7 +6,7 @@ const create = async (itensSold) => {
 };
 
 const getAllsales = async () => salesModel.getAll();
-
+ 
 const getIdSales = async (id) => {
   const productId = await salesModel.getById(id);
 
