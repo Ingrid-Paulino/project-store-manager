@@ -3,18 +3,22 @@ const conn = require('./connection');
 const createSale = async () => {
   const query = 'INSERT INTO sales (date) VALUES (?)';
   const [row] = await conn.execute(query, [new Date()]);
+  // console.log('row', row);
   return row.insertId;
 };
 
 const create = async (itemsSold) => {
+  // console.log('itemsSold', itemsSold);
   const saleId = await createSale();
+  // console.log('saleId', saleId);
+
   const createQuery = itemsSold.map(async (item) => {
     const query = 'INSERT INTO sales_products (sale_id, product_id, quantity) VALUES (?, ?, ?)';
     await conn.execute(query, [saleId, item.product_id, item.quantity]);
   });
 
   await Promise.all(createQuery);
-
+  // console.log('itemsSold', saleId, itemsSold);
   return { id: saleId, itemsSold };
 };
 
@@ -29,6 +33,7 @@ const getAll = async () => {
     ON SP.sale_id = S.id `;
 
   const [rows] = await conn.execute(query);
+  // console.log(rows);
   return rows;
 };
 
@@ -48,32 +53,37 @@ WHERE S.id = ?`;
 
 const getById2 = async (id) => {
   const query = 'SELECT * FROM sales WHERE id = ?';
-  const [[rows]] = await conn.execute(query, [id]);
+  const [rows] = await conn.execute(query, [id]);
+  // console.log('rows', rows);
   return rows;
 };
 
 const update = async (id, uupdateSales) => {
     await Promise.all(uupdateSales.map(async (item) => {
-      console.log('item', item.quantity, id);
+      // console.log('item', item.quantity, id);
     const query = 'UPDATE sales_products SET quantity = ? WHERE sale_id = ?';
     await conn.execute(query, [item.quantity, id]);
   }));
 
+  // console.log('rows', id, uupdateSales);
+
   return { saleId: id, itemUpdated: uupdateSales };
 };
 
-// const remove = async (id, uupdateSales) => {
-//   console.log('response 3', uupdateSales);
+const remove = async (id) => {
+  const query = 'DELETE FROM sales_products WHERE sale_id = ?';
+    
+  await conn.execute(query, [id]);
 
-//   await Promise.all(uupdateSales.map(async (item) => {
-//     console.log('resposta 4', item.quantity, id);
-//     const query = 'DELETE * FROM sales_products WHERE id = ?';
-//     const r = await conn.execute(query, [id]);
-//     console.log('r', r);
-//   }));
+  return true;
+};
 
-//     const query = 'DELETE FROM sales WHERE id = ?';
-//     await conn.execute(query, [id]);
-// };
-
-module.exports = { create, getAll, getById, getById2, update };
+module.exports = { 
+  createSale,
+  create,
+  getAll,
+  getById,
+  getById2,
+  update,
+  remove,
+ };

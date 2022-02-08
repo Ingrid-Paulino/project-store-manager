@@ -9,7 +9,6 @@ const getAllsales = async () => salesModel.getAll();
 
 const getIdSales = async (id) => {
   const productId = await salesModel.getById(id);
-  // console.log('productId', productId);
 
   if (!productId.length) return { status: 404, message: 'Sale not found' };
   // ou
@@ -30,23 +29,26 @@ const updateSales = async (id, uupdateSales) => {
   return update;
 }; 
 
-// const removeSales = async (id, uupdateSales) => {
-//   const salesId = await salesModel.getById2(id);
-//   console.log('response2', salesId);
+const remove = async (id) => {
+  const salesId = await salesModel.getById(id);
+  console.log('salesId1', salesId);
 
-//   if (!salesId) return { status: 404, message: 'sales not found' };
-
-//   await Promise.all(uupdateSales);
-//   const deleta = await salesModel.remove(id, uupdateSales);
-//   console.log('ex', deleta);
-
-//   return deleta;
-// };
+  if (!salesId.length) return { status: 404, message: 'Sale not found' };
+  console.log('salesId2', salesId);
+  
+  await salesId.map(async (item) => {
+    console.log('item', item);
+    await salesModel.remove(id, item);
+  });
+   
+  console.log('salesId', salesId);
+  return salesId;
+};
 
 module.exports = {
   create,
   getAllsales,
   getIdSales,
   updateSales,
-  // removeSales,
+  remove,
 };
