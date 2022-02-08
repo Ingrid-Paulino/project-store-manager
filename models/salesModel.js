@@ -48,6 +48,7 @@ INNER JOIN sales AS S
 WHERE S.id = ?`;
 
   const [rows] = await conn.execute(query, [id]);
+  // console.log('rows', rows);
   return rows;
 };
 
@@ -65,7 +66,7 @@ const update = async (id, uupdateSales) => {
     await conn.execute(query, [item.quantity, id]);
   }));
 
-  // console.log('rows', id, uupdateSales);
+  console.log('rows', id, uupdateSales);
 
   return { saleId: id, itemUpdated: uupdateSales };
 };
