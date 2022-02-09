@@ -27,6 +27,7 @@ const getAll = async () => {
 const getById = async (id) => {
   const query = 'SELECT * FROM products WHERE id = ?';
   const [[rows]] = await conn.execute(query, [id]);
+  console.log('rows', rows);
   return rows;
 };
 
@@ -36,6 +37,19 @@ const update = async (id, name, quantity) => {
   await conn.execute(query, [name, quantity, id]);
 
   return { id, name, quantity };
+};
+
+const atualizaQuantidadeDeProdutos = async (id, quantity) => {
+  const product = await getById(id);
+
+ const quantityAtualizado = product.quantity + quantity;
+  // console.log({ product, quantityAtualizado });
+
+  const query = 'UPDATE products SET quantity = ? WHERE id = ?';
+
+  await conn.execute(query, [quantityAtualizado, id]);
+
+  // return { id, quantityAtualizado };
 };
 
 const remove = async (id) => {
@@ -52,4 +66,5 @@ module.exports = {
   getById,
   update,
   remove,
+  atualizaQuantidadeDeProdutos,
 };

@@ -1,5 +1,7 @@
 const conn = require('./connection');
 
+const productModel = require('./productsModel');
+
 const createSale = async () => {
   const query = 'INSERT INTO sales (date) VALUES (?)';
   const [row] = await conn.execute(query, [new Date()]);
@@ -18,6 +20,11 @@ const create = async (itemsSold) => {
   });
 
   await Promise.all(createQuery);
+  const atualizaQuantidade = itemsSold.map(async (item) => {
+    await productModel.atualizaQuantidadeDeProdutos(item.product_id, (item.quantity * -1));
+  });
+
+  await Promise.all(atualizaQuantidade);
   // console.log('itemsSold', saleId, itemsSold);
   return { id: saleId, itemsSold };
 };
@@ -62,9 +69,17 @@ const getById2 = async (id) => {
 const update = async (id, uupdateSales) => {
     await Promise.all(uupdateSales.map(async (item) => {
       // console.log('item', item.quantity, id);
+      console.log('item', uupdateSales, id);
+
     const query = 'UPDATE sales_products SET quantity = ? WHERE sale_id = ?';
     await conn.execute(query, [item.quantity, id]);
   }));
+
+  // const estoque = 10;
+
+  // const atualizaQuantidade = uupdateSales.map(async (item) => {
+  //   await productModel.atualizaQuantidadeDeProdutos(item.product_id, item.quantity, '-');
+  // });
 
   console.log('rows', id, uupdateSales);
 
@@ -79,6 +94,24 @@ const remove = async (id) => {
   return true;
 };
 
+// const update = async (id, uupdateSales) => {
+//   await Promise.all(uupdateSales.map(async (item) => {
+//     // console.log('item', item.quantity, id);
+//     console.log('item', uupdateSales, id);
+
+//   const query = 'UPDATE products SET quantity = ? WHERE id = ?';
+//   await conn.execute(query, [item.quantity, id]);
+// }));
+
+// };
+
+// const lastSale = async (id) => {
+//   const query = 'SELECT * FROM sales_products WHERE = ?';
+
+//   const [row] = await conn.execute(query, [id]);
+//   return row;
+// };
+
 module.exports = { 
   createSale,
   create,
@@ -87,4 +120,5 @@ module.exports = {
   getById2,
   update,
   remove,
+  // lastSale,
  };
