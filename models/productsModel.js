@@ -2,10 +2,10 @@ const conn = require('./connection');
 
 const create = async (name, quantity) => {
     const query = 'INSERT INTO products (name, quantity) VALUES (?, ?)';
-
+console.log({ name, quantity });
     // row or result
     const [row] = await conn.execute(query, [name, quantity]);
-    // console.log('result', row);
+    console.log('result', row);
 
     return { id: row.insertId, name, quantity };
 };
